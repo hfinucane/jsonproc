@@ -1,0 +1,27 @@
+jsonproc
+
+A read-only /proc to json bridge. In general, the URL scheme looks like:
+
+	/		# Everything in /proc
+	/loadavg	# The contents of /proc/loadavg
+	/proc/1		# All About Init
+
+When hitting a directory, you should expect a blob that looks like this:
+
+	{ 
+	  'path': '/sys/',
+	  'files': [],
+	  'dirs': ['abi', 'debug', 'dev', 'fs', 'kernel', 'net', 'vm']
+	}
+
+When hitting a file, you should expect a blob that looks like this:
+
+	{
+	  'path': '/loadavg',
+	  'contents': 'MC4wMSAwLjA2IDAuMDYgMS8zOTEgMjc2Mgo='
+	}
+
+This does nothing special around permissions. If you would like to read
+files that are root-readable only, running this as root should work. Because
+it's written in a memory-safe language, it's possible this isn't even that
+terrible an idea, but, uh, this should not be taken as an endorsement.
