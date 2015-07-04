@@ -10,14 +10,16 @@ import (
 )
 
 type blob struct {
-	Path        string
-	files, dirs *[]string
-	Contents    *string
-	Err         string
-	Mode        string
+	Path     string   `json:"path"`
+	Files    []string `json:"files,omitempty"`
+	Dirs     []string `json:"dirs,omitempty"`
+	Contents *string  `json:"contents,omitempty"`
+	Err      string   `json:"err,omitempty"`
+	Mode     string   `json:"mode,omitempty"`
 }
 
 var BUFMAX = 1024 * 1024 * 4
+var DIRMAX = 1024
 
 func readFile(path string) (rval *blob) {
 	rval = new(blob)
@@ -40,8 +42,33 @@ func readFile(path string) (rval *blob) {
 	return
 }
 
-func readDir(path string) *blob {
-	return &blob{}
+func readDir(path string) (rval *blob) {
+	rval = new(blob)
+
+	fd, err := os.Open(path)
+
+	if err != nil {
+		fmt.Println("not a valid path", err)
+		rval.Err = err.Error()
+		return
+	}
+	files, err := fd.Readdir(DIRMAX)
+	if err != nil {
+		rval.Err = err.Error()
+		return
+	}
+
+	// Not ideal
+	rval.Files = make([]string, 0, len(files))
+	rval.Dirs = make([]string, 0, len(files))
+	for _, literal := range files {
+		if literal.IsDir() {
+			rval.Dirs = append(rval.Dirs, literal.Name())
+		} else {
+			rval.Files = append(rval.Files, literal.Name())
+		}
+	}
+	return
 }
 
 func readPath(path string) (rval *blob) {
@@ -59,7 +86,10 @@ func readPath(path string) (rval *blob) {
 		rval.Contents = latest.Contents
 		rval.Err = latest.Err
 	} else if fileinfo.Mode().IsDir() {
-		return readDir(path)
+		latest := readDir(path)
+		rval.Files = latest.Files
+		rval.Dirs = latest.Dirs
+		rval.Err = latest.Err
 	}
 	return
 }
