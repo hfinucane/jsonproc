@@ -106,6 +106,9 @@ func main() {
 		if err != nil {
 			log.Println("marshalling error", err, b)
 		}
+		if err != nil || b.Err != "" {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		fmt.Fprintf(w, string(b_str))
 	})
 
