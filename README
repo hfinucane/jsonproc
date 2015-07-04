@@ -9,16 +9,16 @@ A read-only /proc to json bridge. In general, the URL scheme looks like:
 When hitting a directory, you should expect a blob that looks like this:
 
 	{ 
-	  'path': '/sys/',
-	  'files': [],
-	  'dirs': ['abi', 'debug', 'dev', 'fs', 'kernel', 'net', 'vm']
+	  "path": "/sys/",
+	  "files": [],
+	  "dirs": ["abi", "debug", "dev", "fs", "kernel", "net", "vm"]
 	}
 
 When hitting a file, you should expect a blob that looks like this:
 
 	{
-	  'path': '/loadavg',
-	  'contents': '0.09 0.12 0.17 1/613 4319\n'
+	  "path": "/loadavg",
+	  "contents": "0.09 0.12 0.17 1/613 4319\n"
 	}
 
 This does nothing special around permissions. If you would like to read
