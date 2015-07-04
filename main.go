@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -95,6 +96,10 @@ func readPath(path string) (rval *blob) {
 }
 
 func main() {
+	listen := flag.String("listen", ":9234", "What to listen on- you should prefer to bind to a local interface, like 10.0.1.3:9234")
+
+	flag.Parse()
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		b := readPath(path.Join("/proc", r.URL.Path))
 		b_str, err := json.Marshal(*b)
@@ -104,5 +109,5 @@ func main() {
 		fmt.Fprintf(w, string(b_str))
 	})
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(*listen, nil))
 }
