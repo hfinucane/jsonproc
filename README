@@ -1,6 +1,6 @@
-jsonproc
+# jsonproc
 
-A read-only /proc to json bridge. In general, the URL scheme looks like:
+A read-only `/proc` to json bridge. In general, the URL scheme looks like:
 
 	/		# Everything in /proc
 	/loadavg	# The contents of /proc/loadavg
@@ -9,7 +9,7 @@ A read-only /proc to json bridge. In general, the URL scheme looks like:
 When hitting a directory, you should expect a blob that looks like this:
 
 	{ 
-	  "path": "/sys/",
+	  "path": "/proc/sys/",
 	  "files": [],
 	  "dirs": ["abi", "debug", "dev", "fs", "kernel", "net", "vm"]
 	}
@@ -17,11 +17,32 @@ When hitting a directory, you should expect a blob that looks like this:
 When hitting a file, you should expect a blob that looks like this:
 
 	{
-	  "path": "/loadavg",
+	  "path": "/proc/loadavg",
 	  "contents": "0.09 0.12 0.17 1/613 4319\n"
 	}
 
-This does nothing special around permissions. If you would like to read
-files that are root-readable only, running this as root should work. Because
-it's written in a memory-safe language, it's possible this isn't even that
-terrible an idea, but, uh, this should not be taken as an endorsement.
+# Usage
+
+    ./jsonproc -listen 10.9.8.7:9234
+
+will get you a /proc-to-json gateway running on port 9234, listening on a local
+address. In general, you should prefer to explicitly bind `jsonproc` to a
+non-routable address- `/proc` leaks all sorts of information.
+
+# Notes around the design
+
+The goal is to quit writing one-off exfiltrations for things in `/proc`. So
+`jsonproc` needs to be lightweight, safe, and reasonably performant.
+
+By default, you can only read the first 4MB of files, and the first 1024
+entries of a directory. These limitations are designed to make it more
+difficult to DOS yourself.
+
+`jsonproc` does nothing special around permissions. If you would like to read
+files that are `root`-readable only, running this as `root` should work.
+Because it's written in a memory-safe language, and never calls anything other
+that `open`, `read`, and `readdir`, it's possible this isn't even that terrible
+an idea, but, uh, this should not be taken as an endorsement. Run it as an
+unprivileged user if possible.
+
+Relative paths- `../` & company- are unsupported. You should be limited to `/proc`.
