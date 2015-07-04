@@ -97,6 +97,8 @@ func readPath(path string) (rval *blob) {
 
 func main() {
 	listen := flag.String("listen", ":9234", "What to listen on- you should prefer to bind to a local interface, like 10.0.1.3:9234")
+	flag.IntVar(&BUFMAX, "file-limit", BUFMAX, "Maximum amount of files to read")
+	flag.IntVar(&DIRMAX, "dir-limit", DIRMAX, "Maximum number of directory entries to read")
 
 	flag.Parse()
 
