@@ -48,7 +48,6 @@ func readDir(path string) (files, dirs []string, err error) {
 	fd, err := os.Open(path)
 
 	if err != nil {
-		fmt.Println("not a valid path", err)
 		return
 	}
 	direntries, err := fd.Readdir(DIRMAX)
