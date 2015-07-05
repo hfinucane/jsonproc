@@ -4,24 +4,24 @@
 
 A read-only `/proc` to json bridge. In general, the URL scheme looks like:
 
-	/		# Everything in /proc
-	/loadavg	# The contents of /proc/loadavg
-	/proc/1		# All About Init
+    /           # Everything in /proc
+    /loadavg    # The contents of /proc/loadavg
+    /proc/1     # All About Init
 
 When hitting a directory, you should expect a blob that looks like this:
 
-	{ 
-	  "path": "/proc/sys/",
-	  "files": [],
-	  "dirs": ["abi", "debug", "dev", "fs", "kernel", "net", "vm"]
-	}
+    { 
+      "path": "/proc/sys/",
+      "files": [],
+      "dirs": ["abi", "debug", "dev", "fs", "kernel", "net", "vm"]
+    }
 
 When hitting a file, you should expect a blob that looks like this:
 
-	{
-	  "path": "/proc/loadavg",
-	  "contents": "0.09 0.12 0.17 1/613 4319\n"
-	}
+    {
+      "path": "/proc/loadavg",
+      "contents": "0.09 0.12 0.17 1/613 4319\n"
+    }
 
 # Installing
 
