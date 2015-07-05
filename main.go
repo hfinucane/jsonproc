@@ -14,7 +14,7 @@ import (
 	"path"
 )
 
-type blob struct {
+type ProcResult struct {
 	Path     string   `json:"path"`
 	Files    []string `json:"files,omitempty"`
 	Dirs     []string `json:"dirs,omitempty"`
@@ -26,8 +26,8 @@ type blob struct {
 var BUFMAX = 1024 * 1024 * 4
 var DIRMAX = 1024
 
-func readFile(path string) (rval *blob) {
-	rval = new(blob)
+func readFile(path string) (rval *ProcResult) {
+	rval = new(ProcResult)
 
 	fd, err := os.Open(path)
 
@@ -47,8 +47,8 @@ func readFile(path string) (rval *blob) {
 	return
 }
 
-func readDir(path string) (rval *blob) {
-	rval = new(blob)
+func readDir(path string) (rval *ProcResult) {
+	rval = new(ProcResult)
 
 	fd, err := os.Open(path)
 
@@ -76,8 +76,8 @@ func readDir(path string) (rval *blob) {
 	return
 }
 
-func readPath(path string) (rval *blob) {
-	rval = &blob{Path: path}
+func readPath(path string) (rval *ProcResult) {
+	rval = &ProcResult{Path: path}
 	fileinfo, err := os.Stat(path)
 
 	if err != nil {
