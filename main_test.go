@@ -28,7 +28,21 @@ func TestSunnyDirectories(t *testing.T) {
 func TestMissingPath(t *testing.T) {
 	proc_result := readPath(path.Join("/proc", "x"))
 
-	if proc_result.Err == "" || proc_result.Contents != nil {
+	if proc_result.Err == "" {
 		t.Errorf("Expected an error, got %v", proc_result)
+	}
+	if proc_result.Contents != nil {
+		t.Errorf("Expected no contents, got %v", proc_result)
+	}
+}
+
+func TestNoPermissions(t *testing.T) {
+	proc_result := readPath(path.Join("/proc", "kpagecount"))
+
+	if proc_result.Err == "" {
+		t.Errorf("Expected an error, got %v", proc_result)
+	}
+	if proc_result.Contents != nil {
+		t.Errorf("Expected no contents, got %v", proc_result)
 	}
 }

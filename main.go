@@ -44,30 +44,26 @@ func readFile(path string) (contents *string, err error) {
 	return
 }
 
-func readDir(path string) (rval *ProcResult) {
-	rval = new(ProcResult)
-
+func readDir(path string) (files, dirs []string, err error) {
 	fd, err := os.Open(path)
 
 	if err != nil {
 		fmt.Println("not a valid path", err)
-		rval.Err = err.Error()
 		return
 	}
-	files, err := fd.Readdir(DIRMAX)
+	direntries, err := fd.Readdir(DIRMAX)
 	if err != nil {
-		rval.Err = err.Error()
 		return
 	}
 
 	// Not ideal
-	rval.Files = make([]string, 0, len(files))
-	rval.Dirs = make([]string, 0, len(files))
-	for _, literal := range files {
+	files = make([]string, 0, len(direntries))
+	dirs = make([]string, 0, len(direntries))
+	for _, literal := range direntries {
 		if literal.IsDir() {
-			rval.Dirs = append(rval.Dirs, literal.Name())
+			dirs = append(dirs, literal.Name())
 		} else {
-			rval.Files = append(rval.Files, literal.Name())
+			files = append(files, literal.Name())
 		}
 	}
 	return
@@ -86,10 +82,10 @@ func readPath(path string) (rval *ProcResult) {
 	if fileinfo.Mode().IsRegular() {
 		rval.Contents, err = readFile(path)
 	} else if fileinfo.Mode().IsDir() {
-		latest := readDir(path)
-		rval.Files = latest.Files
-		rval.Dirs = latest.Dirs
-		rval.Err = latest.Err
+		rval.Files, rval.Dirs, err = readDir(path)
+	}
+	if err != nil {
+		rval.Err = err.Error()
 	}
 	return
 }
