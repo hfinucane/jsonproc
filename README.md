@@ -23,6 +23,24 @@ When hitting a file, you should expect a blob that looks like this:
       "contents": "0.09 0.12 0.17 1/613 4319\n"
     }
 
+Errors are signaled both by the appearance of the "err" field, and with a 500 code:
+
+    $ curl -v localhost:9234/x; echo
+    * Connected to localhost (127.0.0.1) port 9234 (#0)
+    > GET /x HTTP/1.1
+    > Host: localhost:9234
+    > Accept: */*
+    > 
+    < HTTP/1.1 500 Internal Server Error
+    < Date: Sun, 05 Jul 2015 06:27:06 GMT
+    < Content-Length: 66
+    < Content-Type: text/plain; charset=utf-8
+    < 
+    * Connection #0 to host localhost left intact
+    {"path":"/proc/x","err":"stat /proc/x: no such file or directory"}
+
+The contents of "err" are not guaranteed to be stable.
+
 # Installing
 
 Checking out the source code and running 'go build' should be sufficient to get
