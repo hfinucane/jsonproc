@@ -23,6 +23,12 @@ When hitting a file, you should expect a blob that looks like this:
 	  "contents": "0.09 0.12 0.17 1/613 4319\n"
 	}
 
+# Installing
+
+Checking out the source code and running 'go build' should be sufficient to get
+you a binary. There should also be a linux/amd64 binary courtesy of Travis CI
+attached to each [release on Github](https://github.com/hfinucane/jsonproc/releases).
+
 # Usage
 
     ./jsonproc -listen 10.9.8.7:9234
