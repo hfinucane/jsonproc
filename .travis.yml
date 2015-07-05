@@ -4,7 +4,7 @@ go:
 notifications:
   email: false
 script:
-- go build
+- go build -a -tags netgo -installsuffix netgo
 deploy:
   provider: releases
   api_key:
