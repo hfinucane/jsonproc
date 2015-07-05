@@ -66,8 +66,8 @@ difficult to DOS yourself.
 `jsonproc` does nothing special around permissions. If you would like to read
 files that are `root`-readable only, running this as `root` should work.
 Because it's written in a memory-safe language, and never calls anything other
-that `open`, `read`, and `readdir`, it's possible this isn't even that terrible
-an idea, but, uh, this should not be taken as an endorsement. Run it as an
-unprivileged user if possible.
+that `stat`, `open`, `read`, and `readdir`, it's possible this isn't even that
+terrible an idea, but, uh, this should not be taken as an endorsement. Run it
+as an unprivileged user if possible.
 
 Relative paths- `../` & company- are unsupported. You should be limited to `/proc`.
