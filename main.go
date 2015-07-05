@@ -26,24 +26,21 @@ type ProcResult struct {
 var BUFMAX = 1024 * 1024 * 4
 var DIRMAX = 1024
 
-func readFile(path string) (rval *ProcResult) {
-	rval = new(ProcResult)
-
+func readFile(path string) (contents *string, err error) {
 	fd, err := os.Open(path)
 
 	if err != nil {
-		rval.Err = err.Error()
 		return
 	}
 
 	buf := make([]byte, BUFMAX)
 	length, err := fd.Read(buf)
 	if err != nil {
-		rval.Err = err.Error()
 		return
 	}
-	contents := string(buf[:length])
-	rval.Contents = &contents
+
+	contents = new(string)
+	*contents = string(buf[:length])
 	return
 }
 
@@ -87,9 +84,7 @@ func readPath(path string) (rval *ProcResult) {
 	rval.Mode = fileinfo.Mode().String()
 
 	if fileinfo.Mode().IsRegular() {
-		latest := readFile(path)
-		rval.Contents = latest.Contents
-		rval.Err = latest.Err
+		rval.Contents, err = readFile(path)
 	} else if fileinfo.Mode().IsDir() {
 		latest := readDir(path)
 		rval.Files = latest.Files
