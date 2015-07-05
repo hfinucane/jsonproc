@@ -35,8 +35,7 @@ Errors are signaled both by the appearance of the "err" field, and with a 500 co
     < Date: Sun, 05 Jul 2015 06:27:06 GMT
     < Content-Length: 66
     < Content-Type: text/plain; charset=utf-8
-    < 
-    * Connection #0 to host localhost left intact
+
     {"path":"/proc/x","err":"stat /proc/x: no such file or directory"}
 
 The contents of "err" are not guaranteed to be stable.
