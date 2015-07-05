@@ -3,6 +3,8 @@ go:
 - 1.4
 notifications:
   email: false
+script:
+- go build
 deploy:
   provider: releases
   api_key:
