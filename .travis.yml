@@ -1,7 +1,16 @@
 language: go
-
 go:
-    - 1.4
-
+- 1.4
 notifications:
-      email: false
+  email: false
+script:
+- go build
+deploy:
+  provider: releases
+  api_key:
+    secure: dIclVpcxpRZeadFocMdhY6DnTDzpPGN1IElRbplNE79DyM3jEQ5e1g6Dcb5KF5z12t++75i2TRw4bYJbmgPds5ytU/M0FFcWlqttfJFgo707i49extp8LyaaqY4aeb1rg+/65ixUCm3hGEw3+lof53ZIF3/V7JI2LWLfR4udrG8qVziSl7PSXrOEeMipQdbsGcv3SexE3+sqCIS2jbnu93HW82fPd1r7UsXOUaT/3sUCngifIznbanTigpW54v6F3MT1n/G56RGktemU17fK4SmHWF6j2P/CxhQagM2WwgFH+q6MCbqFSL6oIi+ZYWKdpgCnnr+6+fVjhN8eHl39DzVgSiFEYY2T6DrTFb6tU0vlcLoW28O0WEuTV/m7wI8tVbTmALU1KpzCy26VCJ+BqRxaFXbE06cYXDaeQDMnlCyBjFmSVFCm5HuaqAQwgp5uzgcmXZNp09dNVPWNHXyWyD1YLipKdThIWoCeCz7kVoSpzmtb07hHjuRmyr2qwQP7fAYt2wuRKY49U63e+gZHMxvGAVMCIRZe4QbJcHHnuMWV8Y+FwU/TfndKTx3X86zg53hDuY6aVPFoMhqhxnFfjeyCEW+WQPq32SpiLGdKlUh2YZNEtTW+aoM6UxsI+pP+QTm+9/MR9KgSJNVfp4Hlf4hw/ODL3y7QhTzaJM/wt14=
+  file: jsonproc
+  on:
+    repo: hfinucane/jsonproc
+    tags: true
+    all_branches: true
