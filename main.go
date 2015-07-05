@@ -99,6 +99,18 @@ func readPath(path string) (rval *ProcResult) {
 	return
 }
 
+func jsonHandler(w http.ResponseWriter, r *http.Request) {
+	b := readPath(path.Join("/proc", r.URL.Path))
+	b_str, err := json.Marshal(*b)
+	if err != nil {
+		log.Println("marshalling error", err, b)
+	}
+	if err != nil || b.Err != "" {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	fmt.Fprintf(w, string(b_str))
+}
+
 func main() {
 	listen := flag.String("listen", ":9234", "What to listen on- you should prefer to bind to a local interface, like 10.0.1.3:9234")
 	flag.IntVar(&BUFMAX, "file-limit", BUFMAX, "Maximum amount of files to read")
@@ -106,17 +118,7 @@ func main() {
 
 	flag.Parse()
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		b := readPath(path.Join("/proc", r.URL.Path))
-		b_str, err := json.Marshal(*b)
-		if err != nil {
-			log.Println("marshalling error", err, b)
-		}
-		if err != nil || b.Err != "" {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-		fmt.Fprintf(w, string(b_str))
-	})
+	http.HandleFunc("/", jsonHandler)
 
 	log.Fatal(http.ListenAndServe(*listen, nil))
 }
