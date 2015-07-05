@@ -1,5 +1,7 @@
 # jsonproc
 
+[![Build Status](https://travis-ci.org/hfinucane/jsonproc.svg?branch=travis)](https://travis-ci.org/hfinucane/jsonproc)
+
 A read-only `/proc` to json bridge. In general, the URL scheme looks like:
 
 	/		# Everything in /proc
