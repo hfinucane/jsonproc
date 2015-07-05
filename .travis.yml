@@ -10,3 +10,5 @@ deploy:
   file: jsonproc
   on:
     repo: hfinucane/jsonproc
+    tags: true
+    all_branches: true
