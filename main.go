@@ -6,12 +6,14 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"path"
+	"path/filepath"
+	"strings"
 )
 
 type ProcResult struct {
@@ -68,9 +70,23 @@ func readDir(path string) (files, dirs []string, err error) {
 	return
 }
 
+func vetPath(path string) (string, error) {
+	if strings.Contains(path, "..") {
+		return "", errors.New("directory traversal attempt detected")
+	}
+	return filepath.Join("/proc", path), nil
+}
+
 func readProcPath(path string) (rval *ProcResult) {
-	rval = &ProcResult{Path: path}
-	fileinfo, err := os.Stat(path)
+	cleanedPath, err := vetPath(path)
+	rval = &ProcResult{Path: cleanedPath}
+
+	if err != nil {
+		rval.Err = err.Error()
+		return
+	}
+
+	fileinfo, err := os.Stat(cleanedPath)
 
 	if err != nil {
 		rval.Err = err.Error()
@@ -79,9 +95,9 @@ func readProcPath(path string) (rval *ProcResult) {
 	rval.Mode = fileinfo.Mode().String()
 
 	if fileinfo.Mode().IsRegular() {
-		rval.Contents, err = readFile(path)
+		rval.Contents, err = readFile(cleanedPath)
 	} else if fileinfo.Mode().IsDir() {
-		rval.Files, rval.Dirs, err = readDir(path)
+		rval.Files, rval.Dirs, err = readDir(cleanedPath)
 	}
 	if err != nil {
 		rval.Err = err.Error()
@@ -90,7 +106,7 @@ func readProcPath(path string) (rval *ProcResult) {
 }
 
 func jsonHandler(w http.ResponseWriter, r *http.Request) {
-	b := readProcPath(path.Join("/proc", r.URL.Path))
+	b := readProcPath(r.URL.Path)
 	b_str, err := json.Marshal(*b)
 	if err != nil {
 		log.Println("marshalling error", err, b)

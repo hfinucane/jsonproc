@@ -1,13 +1,12 @@
 package main
 
 import (
-	"path"
 	"testing"
 )
 
 func TestSunnyFiles(t *testing.T) {
 	for _, sunny_day := range [...]string{"loadavg", "/self/cmdline", "//version"} {
-		proc_result := readProcPath(path.Join("/proc", sunny_day))
+		proc_result := readProcPath(sunny_day)
 
 		if proc_result.Err != "" || proc_result.Contents == nil {
 			t.Errorf("Expected a result, with no errors, got %v", proc_result)
@@ -17,7 +16,7 @@ func TestSunnyFiles(t *testing.T) {
 
 func TestSunnyDirectories(t *testing.T) {
 	for _, sunny_day := range [...]string{"/", "", "/self", "/self/"} {
-		proc_result := readProcPath(path.Join("/proc", sunny_day))
+		proc_result := readProcPath(sunny_day)
 
 		if proc_result.Err != "" || (len(proc_result.Files) == 0 && len(proc_result.Dirs) == 0) {
 			t.Errorf("Expected a result, with no errors, got %v", proc_result)
@@ -26,7 +25,7 @@ func TestSunnyDirectories(t *testing.T) {
 }
 
 func TestMissingPath(t *testing.T) {
-	proc_result := readProcPath(path.Join("/proc", "x"))
+	proc_result := readProcPath("x")
 
 	if proc_result.Err == "" {
 		t.Errorf("Expected an error, got %v", proc_result)
@@ -37,7 +36,18 @@ func TestMissingPath(t *testing.T) {
 }
 
 func TestNoPermissions(t *testing.T) {
-	proc_result := readProcPath(path.Join("/proc", "kpagecount"))
+	proc_result := readProcPath("kpagecount")
+
+	if proc_result.Err == "" {
+		t.Errorf("Expected an error, got %v", proc_result)
+	}
+	if proc_result.Contents != nil {
+		t.Errorf("Expected no contents, got %v", proc_result)
+	}
+}
+
+func TestNoTraversal(t *testing.T) {
+	proc_result := readProcPath("../etc/passwd")
 
 	if proc_result.Err == "" {
 		t.Errorf("Expected an error, got %v", proc_result)
