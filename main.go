@@ -74,7 +74,18 @@ func vetPath(path string) (string, error) {
 	if strings.Contains(path, "..") {
 		return "", errors.New("directory traversal attempt detected")
 	}
-	return filepath.Join("/proc", path), nil
+
+	finalPath := filepath.Join("/proc", path)
+	cleanedFinalPath, err := filepath.EvalSymlinks(finalPath)
+	if err != nil {
+		return "", err
+	}
+
+	if cleanedFinalPath == "/proc" || strings.HasPrefix(cleanedFinalPath, "/proc/") {
+		return cleanedFinalPath, nil
+	}
+
+	return "", errors.New(fmt.Sprintf("Symlink traversal attempt detected from ", cleanedFinalPath))
 }
 
 func readProcPath(path string) (rval *ProcResult) {

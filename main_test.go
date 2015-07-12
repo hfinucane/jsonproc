@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"testing"
 )
 
@@ -48,6 +50,17 @@ func TestNoPermissions(t *testing.T) {
 
 func TestNoTraversal(t *testing.T) {
 	proc_result := readProcPath("../etc/passwd")
+
+	if proc_result.Err == "" {
+		t.Errorf("Expected an error, got %v", proc_result)
+	}
+	if proc_result.Contents != nil {
+		t.Errorf("Expected no contents, got %v", proc_result)
+	}
+}
+
+func TestNoSymlinkTraversal(t *testing.T) {
+	proc_result := readProcPath(fmt.Sprintf("/self/%d/tasks/cwd/main_test.go", os.Getpid()))
 
 	if proc_result.Err == "" {
 		t.Errorf("Expected an error, got %v", proc_result)
