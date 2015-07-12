@@ -68,7 +68,7 @@ func readDir(path string) (files, dirs []string, err error) {
 	return
 }
 
-func readPath(path string) (rval *ProcResult) {
+func readProcPath(path string) (rval *ProcResult) {
 	rval = &ProcResult{Path: path}
 	fileinfo, err := os.Stat(path)
 
@@ -90,7 +90,7 @@ func readPath(path string) (rval *ProcResult) {
 }
 
 func jsonHandler(w http.ResponseWriter, r *http.Request) {
-	b := readPath(path.Join("/proc", r.URL.Path))
+	b := readProcPath(path.Join("/proc", r.URL.Path))
 	b_str, err := json.Marshal(*b)
 	if err != nil {
 		log.Println("marshalling error", err, b)
