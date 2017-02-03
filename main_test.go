@@ -7,65 +7,65 @@ import (
 )
 
 func TestSunnyFiles(t *testing.T) {
-	for _, sunny_day := range [...]string{"loadavg", "/self/cmdline", "//version"} {
-		proc_result := readProcPath(sunny_day)
+	for _, sunnyDay := range [...]string{"loadavg", "/self/cmdline", "//version"} {
+		procResult := readProcPath(sunnyDay)
 
-		if proc_result.Err != "" || proc_result.Contents == nil {
-			t.Errorf("Expected a result, with no errors, got %v", proc_result)
+		if procResult.Err != "" || procResult.Contents == nil {
+			t.Errorf("Expected a result, with no errors, got %v", procResult)
 		}
 	}
 }
 
 func TestSunnyDirectories(t *testing.T) {
-	for _, sunny_day := range [...]string{"/", "", "/self", "/self/"} {
-		proc_result := readProcPath(sunny_day)
+	for _, sunnyDay := range [...]string{"/", "", "/self", "/self/"} {
+		procResult := readProcPath(sunnyDay)
 
-		if proc_result.Err != "" || (len(proc_result.Files) == 0 && len(proc_result.Dirs) == 0) {
-			t.Errorf("Expected a result, with no errors, got %v", proc_result)
+		if procResult.Err != "" || (len(procResult.Files) == 0 && len(procResult.Dirs) == 0) {
+			t.Errorf("Expected a result, with no errors, got %v", procResult)
 		}
 	}
 }
 
 func TestMissingPath(t *testing.T) {
-	proc_result := readProcPath("x")
+	procResult := readProcPath("x")
 
-	if proc_result.Err == "" {
-		t.Errorf("Expected an error, got %v", proc_result)
+	if procResult.Err == "" {
+		t.Errorf("Expected an error, got %v", procResult)
 	}
-	if proc_result.Contents != nil {
-		t.Errorf("Expected no contents, got %v", proc_result)
+	if procResult.Contents != nil {
+		t.Errorf("Expected no contents, got %v", procResult)
 	}
 }
 
 func TestNoPermissions(t *testing.T) {
-	proc_result := readProcPath("kpagecount")
+	procResult := readProcPath("kpagecount")
 
-	if proc_result.Err == "" {
-		t.Errorf("Expected an error, got %v", proc_result)
+	if procResult.Err == "" {
+		t.Errorf("Expected an error, got %v", procResult)
 	}
-	if proc_result.Contents != nil {
-		t.Errorf("Expected no contents, got %v", proc_result)
+	if procResult.Contents != nil {
+		t.Errorf("Expected no contents, got %v", procResult)
 	}
 }
 
 func TestNoTraversal(t *testing.T) {
-	proc_result := readProcPath("../etc/passwd")
+	procResult := readProcPath("../etc/passwd")
 
-	if proc_result.Err == "" {
-		t.Errorf("Expected an error, got %v", proc_result)
+	if procResult.Err == "" {
+		t.Errorf("Expected an error, got %v", procResult)
 	}
-	if proc_result.Contents != nil {
-		t.Errorf("Expected no contents, got %v", proc_result)
+	if procResult.Contents != nil {
+		t.Errorf("Expected no contents, got %v", procResult)
 	}
 }
 
 func TestNoSymlinkTraversal(t *testing.T) {
-	proc_result := readProcPath(fmt.Sprintf("/self/%d/tasks/cwd/main_test.go", os.Getpid()))
+	procResult := readProcPath(fmt.Sprintf("/self/%d/tasks/cwd/main_test.go", os.Getpid()))
 
-	if proc_result.Err == "" {
-		t.Errorf("Expected an error, got %v", proc_result)
+	if procResult.Err == "" {
+		t.Errorf("Expected an error, got %v", procResult)
 	}
-	if proc_result.Contents != nil {
-		t.Errorf("Expected no contents, got %v", proc_result)
+	if procResult.Contents != nil {
+		t.Errorf("Expected no contents, got %v", procResult)
 	}
 }
