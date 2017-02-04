@@ -16,6 +16,7 @@ import (
 	"strings"
 )
 
+// ProcResult holds information and metadata about a /proc path
 type ProcResult struct {
 	Path     string   `json:"path"`
 	Files    []string `json:"files,omitempty"`
@@ -25,8 +26,8 @@ type ProcResult struct {
 	Mode     string   `json:"mode,omitempty"`
 }
 
-var BUFMAX = 1024 * 1024 * 4
-var DIRMAX = 1024
+var bufmax = 1024 * 1024 * 4
+var dirmax = 1024
 
 func readFile(path string) (contents *string, err error) {
 	fd, err := os.Open(path)
@@ -35,7 +36,7 @@ func readFile(path string) (contents *string, err error) {
 		return
 	}
 
-	buf := make([]byte, BUFMAX)
+	buf := make([]byte, bufmax)
 	length, err := fd.Read(buf)
 	if err != nil {
 		return
@@ -52,7 +53,7 @@ func readDir(path string) (files, dirs []string, err error) {
 	if err != nil {
 		return
 	}
-	direntries, err := fd.Readdir(DIRMAX)
+	direntries, err := fd.Readdir(dirmax)
 	if err != nil {
 		return
 	}
@@ -85,7 +86,7 @@ func vetPath(path string) (string, error) {
 		return cleanedFinalPath, nil
 	}
 
-	return "", errors.New(fmt.Sprintf("Symlink traversal attempt detected from ", cleanedFinalPath))
+	return "", errors.New(fmt.Sprint("Symlink traversal attempt detected from ", cleanedFinalPath))
 }
 
 func readProcPath(path string) (rval *ProcResult) {
@@ -118,20 +119,20 @@ func readProcPath(path string) (rval *ProcResult) {
 
 func jsonHandler(w http.ResponseWriter, r *http.Request) {
 	b := readProcPath(r.URL.Path)
-	b_str, err := json.Marshal(*b)
+	bStr, err := json.Marshal(*b)
 	if err != nil {
 		log.Println("marshalling error", err, b)
 	}
 	if err != nil || b.Err != "" {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	fmt.Fprintf(w, string(b_str))
+	fmt.Fprintf(w, string(bStr))
 }
 
 func main() {
 	listen := flag.String("listen", ":9234", "What to listen on- you should prefer to bind to a local interface, like 10.0.1.3:9234")
-	flag.IntVar(&BUFMAX, "file-limit", BUFMAX, "Maximum amount of files to read")
-	flag.IntVar(&DIRMAX, "dir-limit", DIRMAX, "Maximum number of directory entries to read")
+	flag.IntVar(&bufmax, "file-limit", bufmax, "Maximum amount of files to read")
+	flag.IntVar(&dirmax, "dir-limit", dirmax, "Maximum number of directory entries to read")
 
 	flag.Parse()
 
